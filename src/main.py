@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, People, FavoriteList, Planets
 #from models import Person
 
 app = Flask(__name__)
@@ -31,13 +31,39 @@ def sitemap():
     return generate_sitemap(app)
 
 @app.route('/user', methods=['GET'])
-def handle_hello():
+def get_user():
+    Users = User.query.all()
+    Users = list(map(lambda x: x.serialize(),Users))
+    return jsonify(Users)
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
 
-    return jsonify(response_body), 200
+@app.route('/people', methods=['GET'])
+def get_people():
+    Peoples = People.query.all()
+    Peoples = list(map(lambda x: x.serialize(),Peoples))
+    return jsonify(Peoples)
+
+@app.route('/people/<int:id>', methods=['GET'])
+def people_id(id):
+    People_id = People.query.get(id)
+    return jsonify(People_id.serialize())
+
+@app.route('/planets', methods=['GET'])
+def get_planets():
+    Planets_all = Planets.query.all()
+    Planets_all = list(map(lambda x: x.serialize(),Planets_all))
+    return jsonify(Planets_all)
+
+@app.route('/planets/<int:id>', methods=['GET'])
+def planets_id(id):
+    Planets_id = Planets.query.get(id)
+    return jsonify(Planets_id.serialize())
+
+@app.route('/favorite', methods=['GET'])
+def get_favorite():
+    Favorites = FavoriteList.query.all()
+    Favorites = list(map(lambda x: x.serialize(),Favorites))
+    return jsonify(Favorites)
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
